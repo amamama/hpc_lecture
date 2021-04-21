@@ -58,7 +58,7 @@ template<class T>
 void merge_sort(std::vector<T>& vec, int begin, int end) {
   if(begin < end) {
     int mid = (begin + end) / 2;
-	if(end - begin > 0x10000) {
+	if(end - begin > 0x2000) {
 #pragma omp task shared(vec)
       merge_sort(vec, begin, mid);
 #pragma omp task shared(vec)
@@ -70,13 +70,15 @@ void merge_sort(std::vector<T>& vec, int begin, int end) {
 }
 
 int main() {
-  int n = 0x1000000;
+  int n = 0x10000000;
   std::vector<int> vec(n);
   for (int i=0; i<n; i++) {
     vec[i] = rand() % (10 * n);
     //printf("%d ",vec[i]);
   }
   printf("\n");
+#pragma omp parallel
+#pragma omp single
   merge_sort(vec, 0, n-1);
   int last = vec[0];
   for (int i=0; i<n; i++) {
